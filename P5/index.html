@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+   	<script type="text/javascript" src="d3.js"></script>	
+    <style>
+    body {
+	  font: 12px sans-serif;
+	}
+	.tick > line {
+		fill: none;
+		stroke: black;
+	}
+	.tick > text {
+		fill: black;
+	}
+	.selected {
+		stroke: red;
+		fill:red;
+	}
+	.selected2 {
+		stroke: orange;
+		fill:orange;
+	}
+	path.domain {
+		fill: none;
+		stroke-width: 2px;
+		stroke: black;
+	}
+	#wrapper {
+		clear:both;
+	}
+	#chart1 {
+	    float:left;
+	}
+	#chart2{
+		float:left;
+	}
+	#chart3 {
+		float:left;
+		margin-top: 30px;
+		margin-left: 20px;
+	}
+	
+	circle.brushed {
+  		fill: orange;
+	}
+	circle.brushed1 {
+  		fill: red;
+	}
+	circle.unmarked{
+		fill: black;
+	}
+	circle.brushed2 {
+  		fill: red;
+	}
+	.brush .extent {
+		fill: #000;
+        fill-opacity: .1;
+        stroke: #fff;
+	}
+
+    </style>
+
+   	</head>
+   	<body>
+   	<div id="wrapper">
+   	  	<div id="info">
+          	</div>
+	  	<div id="chart1">
+          	</div>
+	  	<div id="chart2">
+          	</div>
+	  	<div id="chart3"> 
+         	</div>
+      	<div id="chart4"> 
+          	</div>
+      	<div id="chart5"> 
+          	</div>
+   	</div>
+   	<script>
+   		var width =500;
+		var height= 500;
+
+		d3.csv("test.csv", function(csv) {
+
+
+
+
+
+			console.log(csv);
+			var moviesByCountry = d3.nest()
+    			.key(function(d){ 
+    				return d.country;
+    			})
+    			.rollup(function(v){ return d3.sum(v, function(d){return 1;});})
+    			.entries(csv);
+    		console.log(JSON.stringify(moviesByCountry));
+
+			var moviesByLanguage = d3.nest()
+    			.key(function(d){ 
+    				return d.language;
+    			})
+    			.rollup(function(v){ return d3.sum(v,function(d){return 1;});})
+    			.entries(csv);
+    		console.log(JSON.stringify(moviesByLanguage));
+
+    		var moviesByYear = d3.nest()
+    			.key(function(d){
+    				return d.title_year;
+    			})
+    			.rollup(function(v){ return d3.sum(v, function(d){return 1;});})
+    			.entries(csv);
+    		console.log(JSON.stringify(moviesByYear));
+
+    		var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+
+
+
+
+		});
+
+   	</script>
+
+  </body>
+</html>
