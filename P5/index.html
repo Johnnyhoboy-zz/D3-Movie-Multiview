@@ -125,7 +125,7 @@
 		var curText = "";
 
 
-		d3.csv("test.csv", function(csv) {
+		d3.csv("filtered_movies.csv", function(csv) {
 
 			for (var i=0; i<csv.length; ++i) {
 				csv[i].ID = i;
@@ -464,18 +464,30 @@
 						});
 
 						// details on demand
-						d3.select("#title").html(""+d.movie_title);
+						if(d.movie_title != "")
+							d3.select("#title").html(""+d.movie_title);
+						else
+							d3.select("#title").html("Unknown");
 						if(d.title_year != 0)
 							d3.select("#year").html(""+d.title_year);
 						else
 							d3.select("#year").html("Unknown");
-						d3.select("#rating").html(""+d.content_rating);
+						if(d.content_rating != "")
+							d3.select("#rating").html(""+d.content_rating);
+						else
+							d3.select("#rating").html("Not Rated");
 						if(d.title_year != 0)
 							d3.select("#duration").html(""+d.duration+" min");
 						else
 							d3.select("#duration").html("Unknown");
-						d3.select("#director").html(""+d.director_name);
-						d3.select("#genres").html(""+d.genres);
+						if(d.director_name != "")
+							d3.select("#director").html(""+d.director_name);
+						else
+							d3.select("#director").html("Unknown");
+						if(d.content_rating != "")
+							d3.select("#genres").html(""+d.genres);
+						else
+							d3.select("#genres").html("Unknown");
 						if(d.budget != 0)
 							d3.select("#budget").html("$"+d.budget);
 						else
@@ -567,18 +579,30 @@
 					});
 
 					// details on demand
-					d3.select("#title").html(""+d.movie_title);
+					if(d.movie_title != "")
+						d3.select("#title").html(""+d.movie_title);
+					else
+						d3.select("#title").html("Unknown");
 					if(d.title_year != 0)
 						d3.select("#year").html(""+d.title_year);
 					else
 						d3.select("#year").html("Unknown");
-					d3.select("#rating").html(""+d.content_rating);
+					if(d.content_rating != "")
+						d3.select("#rating").html(""+d.content_rating);
+					else
+						d3.select("#rating").html("Not Rated");
 					if(d.title_year != 0)
 						d3.select("#duration").html(""+d.duration+" min");
 					else
 						d3.select("#duration").html("Unknown");
-					d3.select("#director").html(""+d.director_name);
-					d3.select("#genres").html(""+d.genres);
+					if(d.director_name != "")
+						d3.select("#director").html(""+d.director_name);
+					else
+						d3.select("#director").html("Unknown");
+					if(d.content_rating != "")
+						d3.select("#genres").html(""+d.genres);
+					else
+						d3.select("#genres").html("Unknown");
 					if(d.budget != 0)
 						d3.select("#budget").html("$"+d.budget);
 					else
