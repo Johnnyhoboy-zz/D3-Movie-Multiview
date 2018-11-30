@@ -58,9 +58,9 @@
           	</div>
 	  	<div id="chart1">
           	</div>
-	  	<div id="chart4">
+	  	<div id="chart2">
           	</div>
-	  	<div id="chart5"> 
+	  	<div id="chart3"> 
          	</div>
       	<div id="chart4"> 
           	</div>
@@ -70,8 +70,8 @@
    	<script>
    		var margin = {top: 20, right: 20, bottom: 60, left: 40};
 
-   		var width = 500;
-		var height = 500;
+   		var width = 400;
+		var height = 400;
 
    		var width1 = width - margin.left - margin.right;
 		var height1 = height - margin.top - margin.bottom;
@@ -221,7 +221,7 @@
 
       		chart2.append("text")
         		.text("Movies by Countries")
-        		.attr("transform", "translate(-80,-230)")
+        		.attr("transform", "translate(-80,"+(-height/2 + 25) +")")
         		.style("font", "23px avenir")
 
         	var chart3 = d3.select("#chart2")
@@ -267,7 +267,7 @@
 
       		chart3.append("text")
         		.text("Movies by Countries")
-        		.attr("transform", "translate(-80,-230)")
+        		.attr("transform", "translate(-80, " +(-height/2 + 25) + ")")
         		.style("font", "23px avenir")
 
 
@@ -314,6 +314,9 @@
 					.attr("r", 3)
 					.on("click", function(d,i){ 
 							// select the clicked circle
+							chart4.selectAll('circle').classed("selected", false);
+							chart5.selectAll('circle').classed("selected", false);
+
 							chart4.selectAll('circle').classed("selected", function(e) {			
 								return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
 									  d.num_user_for_reviews == e.num_user_for_reviews;
@@ -346,6 +349,8 @@
 				.attr("r", 3)
 				.on("click", function(d,i){ 
 						// select the clicked circle
+						chart4.selectAll('circle').classed("selected", false);
+						chart5.selectAll('circle').classed("selected", false);
 						chart5.selectAll('circle').classed("selected", function(e) {			
 							return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
 									 d.num_user_for_reviews == e.num_user_for_reviews;
