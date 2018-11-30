@@ -54,6 +54,8 @@
    	</head>
    	<body>
    	<div id="wrapper">
+   		<p><center><h1> Movies </h1></center></p>
+   		<br><br><br>
    	  	<div id="info">
           	</div>
 	  	<div id="chart1">
@@ -62,13 +64,14 @@
           	</div>
 	  	<div id="chart3"> 
          	</div>
+        <br> <br>
       	<div id="chart4"> 
           	</div>
       	<div id="chart5"> 
           	</div>
    	</div>
    	<script>
-   		var margin = {top: 20, right: 20, bottom: 60, left: 40};
+   		var margin = {top: 40, right: 20, bottom: 60, left: 40};
 
    		var width = 400;
 		var height = 400;
@@ -113,7 +116,7 @@
     				if (d.title_year != "0")
     					return d.title_year;
     				else 
-    					return "Not Specified";
+    					return "N/A";
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return 1;});})
     			.entries(csv);
@@ -170,12 +173,12 @@
       		  .append("text")
         		.attr("class", "label")
         		.text("Count")
-        		.attr("transform", "translate(15, 0), rotate(-90)")
+        		.attr("transform", "translate(15, -10), rotate(-90)")
         		.style("text-anchor", "end")
 
         	chart1.append("text")
         		.text("Number of Movies by Year")
-        		.attr("transform", "translate(" + (width1/2 - 100) + ",0)")
+        		.attr("transform", "translate(" + (width1/2 - 120) + ",-20)")
         		.style("font", "23px avenir")
 
         	var chart2 = d3.select("#chart2")
@@ -221,7 +224,7 @@
 
       		chart2.append("text")
         		.text("Movies by Countries")
-        		.attr("transform", "translate(-80,"+(-height/2 + 25) +")")
+        		.attr("transform", "translate(-95,"+(-height/2 + 20) +")")
         		.style("font", "23px avenir")
 
         	var chart3 = d3.select("#chart2")
@@ -266,8 +269,8 @@
       				.style("fill", function(d) { return colorScale2(d.data.key); });
 
       		chart3.append("text")
-        		.text("Movies by Countries")
-        		.attr("transform", "translate(-80, " +(-height/2 + 25) + ")")
+        		.text("Movies by Language")
+        		.attr("transform", "translate(-95, " +(-height/2 + 20) + ")")
         		.style("font", "23px avenir")
 
 
@@ -278,10 +281,10 @@
 	    	var userExtent = d3.extent(csv,  function(row) { return row.num_user_for_reviews;   });  
 
 			var xScale = d3.scale.linear().domain(votedExtent).range([50, 720]);
-			var yScale = d3.scale.linear().domain(scoreExtent).range([720, 30]);
+			var yScale = d3.scale.linear().domain(scoreExtent).range([720, 50]);
 		
 			var xScale2 = d3.scale.linear().domain(userExtent).range([50, 720]);
-			var yScale2 = d3.scale.linear().domain(criticExtent).range([720, 30]);
+			var yScale2 = d3.scale.linear().domain(criticExtent).range([720, 50]);
 			
 			var xAxis = d3.svg.axis().scale(xScale);
 			var yAxis = d3.svg.axis().scale(yScale);
@@ -391,6 +394,7 @@
 				.attr("class", "label")
 				.attr("transform", "rotate(-90)")
 				.attr("y", 6)
+				.attr("x", -15)
 				.attr("dy", ".71em")
 				.style("text-anchor", "end")
 				.text("IMDb Score");
@@ -417,6 +421,16 @@
 				.attr("dy", ".71em")
 				.style("text-anchor", "end")
 				.text("IMDb Score");
+
+			chart4.append("text")
+        		.text("Critic Reviews vs IMDb Score")
+        		.attr("transform", "translate(250,  20 )")
+        		.style("font", "23px avenir")
+
+        	chart5.append("text")
+        		.text("User Reviews vs IMDb Score")
+        		.attr("transform", "translate(250,  20 )")
+        		.style("font", "23px avenir")
 
 			// ------------------------------------------------------
 			// Define brush 1
