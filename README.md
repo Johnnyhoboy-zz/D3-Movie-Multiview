@@ -2,4 +2,5 @@
 
 A movie multiview graph with bar charts, pie charts, scatterplots with brushing + linking, and a details on demand section done with D3.js V3 and Microsoft Visual Code. Utilized a movie API script to gather movie poster images.
 
-[[https://github.com/Johnnyhoboy/D3-Movie-Multiview/blob/master/Multiview.png|alt=Multiview]]
+![alt text](https://github.com/Johnnyhoboy/D3-Movie-Multiview/blob/master/Multiview.png)
+
