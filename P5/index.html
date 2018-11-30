@@ -2,7 +2,9 @@
 <html>
   <head>
     <meta charset="UTF-8"/>
-   	<script type="text/javascript" src="d3.js"></script>	
+	   <script type="text/javascript" src="d3.js"></script>	
+	   <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+	<title>CS 4460 P5</title>
     <style>
     body {
 	  font: 12px sans-serif;
@@ -24,6 +26,10 @@
 	.selected2 {
 		stroke: orange;
 		fill:orange;
+	}
+	.img-responsive {
+		height: 300px;
+		width: 250px;
 	}
 	path.domain {
 		fill: none;
@@ -62,18 +68,18 @@
    	</head>
    	<body>
    	<div id="wrapper">
-   		<center><h1> Movies </h1></center>
-   		<br><br><br>
+		<center><h1> Movie MultiView </h1></center>
+		   <br><br><br>
    	  	<div id="info">
-				 <br><br><br><br><br><br><br><br><br><br><br><br><br>
-				<strong>Title: </strong> <span id="title"></span><br/>
-                <strong>Year: </strong> <span id="year"></span><br/>
-                <strong>Rating: </strong> <span id="rating"></span><br/>
-				<strong>Duration: </strong> <span id="duration"></span><br/> 
-				<strong>Director: </strong> <span id="director"></span><br/> 
-				<strong>Genres: </strong> <span id="genres"></span><br/> 
-				<strong>Budget: </strong> <span id="budget"></span><br/>
-				<strong>Gross: </strong> <span id="gross"></span><br/>
+				<span id="poster"></span><br>
+				<strong>Title: </strong> <span id="title"></span><br>
+                <strong>Year: </strong> <span id="year"></span><br>
+                <strong>Rating: </strong> <span id="rating"></span><br>
+				<strong>Duration: </strong> <span id="duration"></span><br> 
+				<strong>Director: </strong> <span id="director"></span><br> 
+				<strong>Genres: </strong> <span id="genres"></span><br> 
+				<strong>Budget: </strong> <span id="budget"></span><br>
+				<strong>Gross: </strong> <span id="gross"></span><br>
 
           	</div>
 	  	<div id="chart1">
@@ -82,7 +88,7 @@
           	</div>
 	  	<div id="chart3"> 
          	</div>
-        <br> <br>
+        <br> <br><br><br>
       	<div id="chart4"> 
           	</div>
       	<div id="chart5"> 
@@ -157,7 +163,6 @@
     			.entries(csv);
 
     		var colorScale = d3.scale.category10();
-    		console.log('color scale range', colorScale.range());
 
     		var xScale = d3.scale.ordinal()
     			.domain(moviesByYear.map(d => d.key))
@@ -262,7 +267,6 @@
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return d.values;});})
     			.entries(moviesByCountry);
-    		console.log(JSON.stringify(moviesByCountryfilter));
 
 		    var pie = d3.layout.pie()
 		    			.value(function(d) {
@@ -340,7 +344,6 @@
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return d.values;});})
     			.entries(moviesByLanguage);
-    		console.log(JSON.stringify(moviesByLanguagefilter));
 
 		    var pie = d3.layout.pie()
 		    			.value(function(d) {
@@ -397,8 +400,8 @@
         		.attr("transform", "translate(-95, " +(-height/2 + 20) + ")")
         		.style("font", "23px avenir")
 
-
-			/** Scatterplots 4 & 5 **/
+			//----------------------------------------------------------------------------------------------------------------------
+			//Scatterplots 4 & 5 
 			var votedExtent = d3.extent(csv, function(row) { return row.num_critic_for_reviews ; });
 	    	var scoreExtent = d3.extent(csv, function(row) { return row.imdb_score; });
 	    	var criticExtent = d3.extent(csv,  function(row) { return row.imdb_score;  });
@@ -438,74 +441,22 @@
 					.attr("stroke", "black")
 					.attr("cx", function(d) { return xScale(d.num_critic_for_reviews ); })
 					.attr("cy", function(d) { return yScale(d.imdb_score); })
-					.attr("r", 3)
+					.attr("r", 4)
 					.on("click", function(d,i){ 
-							// select the clicked circle
-							chart4.selectAll('circle').classed("selected", false);
-							chart5.selectAll('circle').classed("selected", false);
-
-							chart4.selectAll('circle').classed("selected", function(e) {			
-								return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
-									  d.num_user_for_reviews == e.num_user_for_reviews;
-							});
-
-							// extract the index of selected element
-							brushed_idx = chart4.selectAll("circle.selected").data().map(a => a.ID);
-
-							// link to second svg- highlight node in other svg
-							chart5.selectAll("circle").classed("selected2", function(d) {
-								return brushed_idx.includes(d.ID);
-							});
-
-						// details on demand
-						d3.select("#title").html(""+d.movie_title);
-						if(d.title_year != 0)
-							d3.select("#year").html(""+d.title_year);
-						else
-							d3.select("#year").html("Unknown");
-						d3.select("#rating").html(""+d.content_rating);
-						if(d.title_year != 0)
-							d3.select("#duration").html(""+d.duration+" min");
-						else
-							d3.select("#duration").html("Unknown");
-						d3.select("#director").html(""+d.director_name);
-						d3.select("#genres").html(""+d.genres);
-						if(d.budget != 0)
-							d3.select("#budget").html("$"+d.budget);
-						else
-							d3.select("#budget").html("Unknown");
-						if(d.gross != 0)
-							d3.select("#gross").html("$"+d.gross);
-						else
-							d3.select("#gross").html("Unknown");
-
-
-					});
-				
-			var temp2= chart5.selectAll("circle")
-				.data(csv)
-				.enter()
-				.append("circle")
-				.attr("id",function(d,i) {return i;} )
-				.attr("stroke", "black")
-				.attr("cx", function(d) { return xScale2(d.num_user_for_reviews); })
-				.attr("cy", function(d) { return yScale2(d.imdb_score); })
-				.attr("r", 3)
-				.on("click", function(d,i){ 
 						// select the clicked circle
 						chart4.selectAll('circle').classed("selected", false);
-						chart5.selectAll('circle').classed("selected", false);
-						
-						chart5.selectAll('circle').classed("selected", function(e) {			
+						chart5.selectAll('circle').classed("selected2", false);
+
+						chart4.selectAll('circle').classed("selected", function(e) {			
 							return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
-									 d.num_user_for_reviews == e.num_user_for_reviews;
-							});
+								d.num_user_for_reviews == e.num_user_for_reviews;
+						});
 
 						// extract the index of selected element
-						brushed_idx = chart5.selectAll("circle.selected").data().map(a => a.ID);
+						brushed_idx = chart4.selectAll("circle.selected").data().map(a => a.ID);
 
 						// link to second svg- highlight node in other svg
-						chart4.selectAll("circle").classed("selected2", function(d) {
+						chart5.selectAll("circle").classed("selected2", function(d) {
 							return brushed_idx.includes(d.ID);
 						});
 
@@ -531,8 +482,161 @@
 						else
 							d3.select("#gross").html("Unknown");
 
+						//--------------------------------------------------------------------------------------------------------------------------------------------------
+						//Movie Poster API
 
-				});
+						//Get rid of characters
+						d.movie_title = d.movie_title.replace(':','');
+						d.movie_title = d.movie_title.replace('.','');
+						d.movie_title = d.movie_title.replace('\'','');
+						d.movie_title = d.movie_title.replace(';','');
+						d.movie_title = d.movie_title.replace('#','');
+						d.movie_title = d.movie_title.replace('@','');
+						d.movie_title = d.movie_title.replace('?','');
+						d.movie_title = d.movie_title.replace('!','');
+						d.movie_title = d.movie_title.replace('*','');
+						d.movie_title = d.movie_title.replace('^','');
+
+						$(d.movie_title).focus(function(){
+							var full = $("#poster").has("img").length ? true : false;
+							if(full == false){
+								$('#poster').empty();
+							}
+						});
+						
+						var getPoster = function(){
+
+							var film = d.movie_title;
+							console.log(film);
+
+							if(film == ''){
+
+								$('#poster').html('<div class="alert"><strong>Oops!</strong> Could not find movie poster!</div>');
+
+							} else {
+
+								$('#poster').html('<div class="alert"><strong> Poster loading...</strong></div>');
+
+								$.getJSON("https://api.themoviedb.org/3/search/movie?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&query=" + film + "&callback=?", function(json) {
+								if (json != "Nothing found."){                 
+										$('#poster').html('<img src=\"http://image.tmdb.org/t/p/w500/' + json.results[0].poster_path + '\" class=\"img-responsive\" >');
+									} else {
+										$('#poster').html('<div class="alert"><p> Could not find movie poster!</p></div>');
+
+									}
+								});
+
+							}
+
+							return false;
+						}
+						
+						getPoster();
+
+					}); //Temp1 onclick
+					
+				
+			var temp2= chart5.selectAll("circle")
+				.data(csv)
+				.enter()
+				.append("circle")
+				.attr("id",function(d,i) {return i;} )
+				.attr("stroke", "black")
+				.attr("cx", function(d) { return xScale2(d.num_user_for_reviews); })
+				.attr("cy", function(d) { return yScale2(d.imdb_score); })
+				.attr("r", 4)
+				.on("click", function(d,i){ 
+					// select the clicked circle
+					chart4.selectAll('circle').classed("selected", false);
+					chart5.selectAll('circle').classed("selected2", false);
+					
+					chart5.selectAll('circle').classed("selected2", function(e) {			
+						return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
+									d.num_user_for_reviews == e.num_user_for_reviews;
+						});
+
+					// extract the index of selected element
+					brushed_idx = chart5.selectAll("circle.selected2").data().map(a => a.ID);
+
+					// link to second svg- highlight node in other svg
+					chart4.selectAll("circle").classed("selected", function(d) {
+						return brushed_idx.includes(d.ID);
+					});
+
+					// details on demand
+					d3.select("#title").html(""+d.movie_title);
+					if(d.title_year != 0)
+						d3.select("#year").html(""+d.title_year);
+					else
+						d3.select("#year").html("Unknown");
+					d3.select("#rating").html(""+d.content_rating);
+					if(d.title_year != 0)
+						d3.select("#duration").html(""+d.duration+" min");
+					else
+						d3.select("#duration").html("Unknown");
+					d3.select("#director").html(""+d.director_name);
+					d3.select("#genres").html(""+d.genres);
+					if(d.budget != 0)
+						d3.select("#budget").html("$"+d.budget);
+					else
+						d3.select("#budget").html("Unknown");
+					if(d.gross != 0)
+						d3.select("#gross").html("$"+d.gross);
+					else
+						d3.select("#gross").html("Unknown");
+
+					//--------------------------------------------------------------------------------------------------------------------------------------------------
+					//Movie Poster API
+
+					//Get rid of characters
+					d.movie_title = d.movie_title.replace(':','');
+					d.movie_title = d.movie_title.replace('.','');
+					d.movie_title = d.movie_title.replace('\'','');
+					d.movie_title = d.movie_title.replace(';','');
+					d.movie_title = d.movie_title.replace('#','');
+					d.movie_title = d.movie_title.replace('@','');
+					d.movie_title = d.movie_title.replace('?','');
+					d.movie_title = d.movie_title.replace('!','');
+					d.movie_title = d.movie_title.replace('*','');
+					d.movie_title = d.movie_title.replace('^','');
+
+					$(d.movie_title).focus(function(){
+						var full = $("#poster").has("img").length ? true : false;
+						if(full == false){
+							$('#poster').empty();
+						}
+					});
+					
+					var getPoster = function(){
+
+						var film = d.movie_title;
+						console.log(film);
+
+						if(film == ''){
+
+							$('#poster').html('<div class="alert"><strong>Oops!</strong> Could not find movie poster!</div>');
+
+						} else {
+
+							$('#poster').html('<div class="alert"><strong> Poster loading...</strong></div>');
+
+							$.getJSON("https://api.themoviedb.org/3/search/movie?api_key=15d2ea6d0dc1d476efbca3eba2b9bbfb&query=" + film + "&callback=?", function(json) {
+							if (json != "Nothing found."){                 
+									$('#poster').html('<img src=\"http://image.tmdb.org/t/p/w500/' + json.results[0].poster_path + '\" class=\"img-responsive\" >');
+								} else {
+									$('#poster').html('<div class="alert"><p> Could not find movie poster!</p></div>');
+
+								}
+							});
+
+						}
+
+						return false;
+					}
+					
+					getPoster();
+
+			}); //Temp2 onclick
 
 			chart4 
 				.append("g") // create a group node
@@ -690,9 +794,9 @@
 			function brush2end() {
 				// update after brusing is finished
 			}
-
-
 		}); //csv
+
+
 
    	</script>
 
