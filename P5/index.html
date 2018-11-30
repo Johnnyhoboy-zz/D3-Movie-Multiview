@@ -27,11 +27,16 @@
 	}
 	path.domain {
 		fill: none;
-		stroke-widthPlot: 2px;
+		stroke-width: 2px;
 		stroke: black;
 	}
 	#wrapper {
 		clear:both;
+	}
+	#info {
+		float:left;
+		width: 330px;
+		font-size: 14px
 	}
 	#chart1 {
 	    float:left;
@@ -57,9 +62,19 @@
    	</head>
    	<body>
    	<div id="wrapper">
-   		<p><center><h1> Movies </h1></center></p>
+   		<center><h1> Movies </h1></center>
    		<br><br><br>
    	  	<div id="info">
+				 <br><br><br><br><br><br><br><br><br><br><br><br><br>
+				<strong>Title: </strong> <span id="title"></span><br/>
+                <strong>Year: </strong> <span id="year"></span><br/>
+                <strong>Rating: </strong> <span id="rating"></span><br/>
+				<strong>Duration: </strong> <span id="duration"></span><br/> 
+				<strong>Director: </strong> <span id="director"></span><br/> 
+				<strong>Genres: </strong> <span id="genres"></span><br/> 
+				<strong>Budget: </strong> <span id="budget"></span><br/>
+				<strong>Gross: </strong> <span id="gross"></span><br/>
+
           	</div>
 	  	<div id="chart1">
           	</div>
@@ -90,6 +105,13 @@
 		var num_critic_for_reviews= 0;
 		var num_user_for_reviews = 0;
 		var imdb_score = 0;
+		var budget = 0;
+		var gross = 0;
+		var director_name = ""
+		var duration = 0;
+		var genres = ""
+		var content_rating = ""
+		var movie_title = ""
 
 		var curText = "";
 
@@ -97,10 +119,17 @@
 		d3.csv("test.csv", function(csv) {
 
 			for (var i=0; i<csv.length; ++i) {
+				csv[i].ID = i;
 				csv[i].imdb_score = Number(csv[i].imdb_score);
 				csv[i].num_critic_for_reviews = Number(csv[i].num_critic_for_reviews);
 				csv[i].num_user_for_reviews = Number(csv[i].num_user_for_reviews);
-				csv[i].ID = i;
+				csv[i].budget = Number(csv[i].budget);
+				csv[i].gross = Number(csv[i].gross);
+				csv[i].director_name = csv[i].director_name;
+				csv[i].duration = Number(csv[i].duration);
+				csv[i].genres = csv[i].genres;
+				csv[i].content_rating = csv[i].content_rating;
+				csv[i].movie_title = csv[i].movie_title;
 			}
 
 			var moviesByCountry = d3.nest()
@@ -429,10 +458,27 @@
 							});
 
 						// details on demand
-						//d3.select("#satm").html(""+d.SATM);
-						//d3.select("#satv").html(""+d.SATV);
-						//d3.select("#act").html(""+d.ACT);
-						//d3.select("#gpa").html(""+d.GPA);
+						d3.select("#title").html(""+d.movie_title);
+						if(d.title_year != 0)
+							d3.select("#year").html(""+d.title_year);
+						else
+							d3.select("#year").html("Unknown");
+						d3.select("#rating").html(""+d.content_rating);
+						if(d.title_year != 0)
+							d3.select("#duration").html(""+d.duration+" min");
+						else
+							d3.select("#duration").html("Unknown");
+						d3.select("#director").html(""+d.director_name);
+						d3.select("#genres").html(""+d.genres);
+						if(d.budget != 0)
+							d3.select("#budget").html("$"+d.budget);
+						else
+							d3.select("#budget").html("Unknown");
+						if(d.gross != 0)
+							d3.select("#gross").html("$"+d.gross);
+						else
+							d3.select("#gross").html("Unknown");
+
 
 					});
 				
@@ -449,6 +495,7 @@
 						// select the clicked circle
 						chart4.selectAll('circle').classed("selected", false);
 						chart5.selectAll('circle').classed("selected", false);
+						
 						chart5.selectAll('circle').classed("selected", function(e) {			
 							return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
 									 d.num_user_for_reviews == e.num_user_for_reviews;
@@ -462,11 +509,28 @@
 							return brushed_idx.includes(d.ID);
 						});
 
-					// details on demand
-					//d3.select("#satm").html(""+d.SATM);
-					//d3.select("#satv").html(""+d.SATV);
-					//d3.select("#act").html(""+d.ACT);
-					//d3.select("#gpa").html(""+d.GPA);
+						// details on demand
+						d3.select("#title").html(""+d.movie_title);
+						if(d.title_year != 0)
+							d3.select("#year").html(""+d.title_year);
+						else
+							d3.select("#year").html("Unknown");
+						d3.select("#rating").html(""+d.content_rating);
+						if(d.title_year != 0)
+							d3.select("#duration").html(""+d.duration+" min");
+						else
+							d3.select("#duration").html("Unknown");
+						d3.select("#director").html(""+d.director_name);
+						d3.select("#genres").html(""+d.genres);
+						if(d.budget != 0)
+							d3.select("#budget").html("$"+d.budget);
+						else
+							d3.select("#budget").html("Unknown");
+						if(d.gross != 0)
+							d3.select("#gross").html("$"+d.gross);
+						else
+							d3.select("#gross").html("Unknown");
+
 
 				});
 
