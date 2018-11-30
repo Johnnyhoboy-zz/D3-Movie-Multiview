@@ -24,7 +24,7 @@
 	}
 	path.domain {
 		fill: none;
-		stroke-width: 2px;
+		stroke-widthPlot: 2px;
 		stroke: black;
 	}
 	#wrapper {
@@ -33,33 +33,22 @@
 	#chart1 {
 	    float:left;
 	}
-	#chart2{
+	#chart4{
 		float:left;
 	}
-	#chart3 {
+	#chart5 {
 		float:left;
-		margin-top: 30px;
-		margin-left: 20px;
-	}
-	
-	circle.brushed {
-  		fill: orange;
-	}
-	circle.brushed1 {
-  		fill: red;
-	}
-	circle.unmarked{
-		fill: black;
-	}
-	circle.brushed2 {
-  		fill: red;
 	}
 	.brush .extent {
-		fill: #000;
-        fill-opacity: .1;
-        stroke: #fff;
+		fill-opacity: .1;
+		stroke: #fff;
+		shape-rendering: crispEdges;
 	}
-
+	.brush2 {
+		fill-opacity: .1;
+		stroke: #fff;
+		shape-rendering: crispEdges;
+	}
     </style>
 
    	</head>
@@ -69,9 +58,9 @@
           	</div>
 	  	<div id="chart1">
           	</div>
-	  	<div id="chart2">
+	  	<div id="chart4">
           	</div>
-	  	<div id="chart3"> 
+	  	<div id="chart5"> 
          	</div>
       	<div id="chart4"> 
           	</div>
@@ -89,7 +78,21 @@
 
 		var radius = (Math.min(width, height)/2 - 30);
 
+   		var widthPlot = 750;
+		var heightPlot = 750;
+
+		var num_critic_for_reviews= 0;
+		var num_user_for_reviews = 0;
+		var imdb_score = 0;
+
 		d3.csv("test.csv", function(csv) {
+
+			for (var i=0; i<csv.length; ++i) {
+				csv[i].imdb_score = Number(csv[i].imdb_score);
+				csv[i].num_critic_for_reviews = Number(csv[i].num_critic_for_reviews);
+				csv[i].num_user_for_reviews = Number(csv[i].num_user_for_reviews);
+				csv[i].ID = i;
+			}
 
 			var moviesByCountry = d3.nest()
     			.key(function(d){ 
@@ -114,7 +117,6 @@
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return 1;});})
     			.entries(csv);
-
 
     		var colorScale = d3.scale.category10();
     		console.log('color scale range', colorScale.range());
@@ -269,7 +271,250 @@
         		.style("font", "23px avenir")
 
 
-		});
+			/** Scatterplots 4 & 5 **/
+			var votedExtent = d3.extent(csv, function(row) { return row.num_critic_for_reviews ; });
+	    	var scoreExtent = d3.extent(csv, function(row) { return row.imdb_score; });
+	    	var criticExtent = d3.extent(csv,  function(row) { return row.imdb_score;  });
+	    	var userExtent = d3.extent(csv,  function(row) { return row.num_user_for_reviews;   });  
+
+			var xScale = d3.scale.linear().domain(votedExtent).range([50, 720]);
+			var yScale = d3.scale.linear().domain(scoreExtent).range([720, 30]);
+		
+			var xScale2 = d3.scale.linear().domain(userExtent).range([50, 720]);
+			var yScale2 = d3.scale.linear().domain(criticExtent).range([720, 30]);
+			
+			var xAxis = d3.svg.axis().scale(xScale);
+			var yAxis = d3.svg.axis().scale(yScale);
+		
+			var xAxis2 = d3.svg.axis().scale(xScale2);
+			var yAxis2 = d3.svg.axis().scale(yScale2);
+			
+			yAxis.orient("left");
+			yAxis2.orient("left");
+
+			var chart4 = d3.select("#chart4")
+		                .append("svg:svg")
+		                .attr("width",widthPlot)
+		                .attr("height",heightPlot);
+
+
+	    	var chart5 = d3.select("#chart5")
+		                .append("svg:svg")
+		                .attr("width",widthPlot)
+		                .attr("height",heightPlot);
+
+			var temp1= chart4.selectAll("circle")
+					.data(csv)
+					.enter()
+					.append("circle")
+					.attr("id",function(d,i) {return i;} )
+					.attr("stroke", "black")
+					.attr("cx", function(d) { return xScale(d.num_critic_for_reviews ); })
+					.attr("cy", function(d) { return yScale(d.imdb_score); })
+					.attr("r", 3)
+					.on("click", function(d,i){ 
+							// select the clicked circle
+							chart4.selectAll('circle').classed("selected", function(e) {			
+								return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
+									  d.num_user_for_reviews == e.num_user_for_reviews;
+							});
+
+							// extract the index of selected element
+							brushed_idx = chart4.selectAll("circle.selected").data().map(a => a.ID);
+
+							// link to second svg- highlight node in other svg
+							chart5.selectAll("circle").classed("selected2", function(d) {
+								return brushed_idx.includes(d.ID);
+							});
+
+						// details on demand
+						//d3.select("#satm").html(""+d.SATM);
+						//d3.select("#satv").html(""+d.SATV);
+						//d3.select("#act").html(""+d.ACT);
+						//d3.select("#gpa").html(""+d.GPA);
+
+					});
+				
+			var temp2= chart5.selectAll("circle")
+				.data(csv)
+				.enter()
+				.append("circle")
+				.attr("id",function(d,i) {return i;} )
+				.attr("stroke", "black")
+				.attr("cx", function(d) { return xScale2(d.num_user_for_reviews); })
+				.attr("cy", function(d) { return yScale2(d.imdb_score); })
+				.attr("r", 3)
+				.on("click", function(d,i){ 
+						// select the clicked circle
+						chart5.selectAll('circle').classed("selected", function(e) {			
+							return e.num_critic_for_reviews  == d.num_critic_for_reviews  && d.imdb_score == e.imdb_score &&
+									 d.num_user_for_reviews == e.num_user_for_reviews;
+							});
+
+						// extract the index of selected element
+						brushed_idx = chart5.selectAll("circle.selected").data().map(a => a.ID);
+
+						// link to second svg- highlight node in other svg
+						chart4.selectAll("circle").classed("selected2", function(d) {
+							return brushed_idx.includes(d.ID);
+						});
+
+					// details on demand
+					//d3.select("#satm").html(""+d.SATM);
+					//d3.select("#satv").html(""+d.SATV);
+					//d3.select("#act").html(""+d.ACT);
+					//d3.select("#gpa").html(""+d.GPA);
+
+				});
+
+			chart4 
+				.append("g") // create a group node
+				.attr("transform", "translate(0,"+ (widthPlot -30)+ ")")
+				.call(xAxis) // call the axis generator
+				.append("text")
+				.attr("class", "label")
+				.attr("x", widthPlot-16)
+				.attr("y", -6)
+				.style("text-anchor", "end")
+				.text("Number of Critic Reviews");
+
+			chart4 
+				.append("g") // create a group node
+				.attr("transform", "translate(50, 0)")
+				.call(yAxis)
+				.append("text")
+				.attr("class", "label")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 6)
+				.attr("dy", ".71em")
+				.style("text-anchor", "end")
+				.text("IMDb Score");
+
+			chart5 
+				.append("g") // create a group node
+				.attr("transform", "translate(0,"+ (widthPlot -30)+ ")")
+				.call(xAxis2)
+				.append("text")
+				.attr("class", "label")
+				.attr("x", widthPlot-16)
+				.attr("y", -6)
+				.style("text-anchor", "end")
+				.text("Number of User Reviews");
+
+			chart5 
+				.append("g") // create a group node
+				.attr("transform", "translate(50, 0)")
+				.call(yAxis2)
+				.append("text")
+				.attr("class", "label")
+				.attr("transform", "rotate(-90)")
+				.attr("y", 6)
+				.attr("dy", ".71em")
+				.style("text-anchor", "end")
+				.text("IMDb Score");
+
+			// ------------------------------------------------------
+			// Define brush 1
+			var brush = d3.svg.brush()
+			.extent([[0, 0],[widthPlot, heightPlot]]);
+
+			// Set scales for brush. 
+			brush.x(xScale).y(yScale);
+
+			// 3. bind brush to DOM
+			var brushContainer1 = chart4.append("g")
+				.attr("class", "brush")
+				.call(brush);
+
+			// Register brush events
+			brush
+				.on("brushstart", brushstart)   // when mousedown&dragging starts 
+				.on("brush", brushing)          // when dragging
+				.on("brushend", brushend);      // when mouseup
+
+			function brushstart() {
+				brushContainer2.call(brush2.clear());
+			}
+
+			function brushing() {
+				// simultaneous update during brushing
+				var e = brush.extent();         // coordinates of brushed area: 
+												// top-left x: e[0][0] y: e[0][1]
+												// bottom-right x: e[1][0] y: e[1][1]
+											
+				// change the class of node to brushed if the node is inside the brushed extent
+				chart4.selectAll('circle').classed("selected", function(d) {
+					
+					return e[0][0] <= d.num_critic_for_reviews  && d.num_critic_for_reviews  <= e[1][0] &&
+						e[0][1] <= d.imdb_score && d.imdb_score <= e[1][1];
+				
+				});
+
+				// extract the indexes of brushed elements
+				brushed_idx = chart4.selectAll("circle.selected").data().map(a => a.ID);
+
+				// link to second svg- highlight nodes (that are brushed in svg1) in svg2
+				chart5.selectAll("circle").classed("selected2", function(d) {
+					return brushed_idx.includes(d.ID);
+				});
+			}
+
+			function brushend() {
+				// update after brusing is finished
+			}
+
+			// --------------------------------------------------------
+			// Define brush 2
+			var brush2 = d3.svg.brush()
+			.extent([[0, 0],[widthPlot, heightPlot]]);
+
+			// Set scales for brush. 
+			brush2.x(xScale2).y(yScale2);
+
+			// 3. bind brush to DOM
+			var brushContainer2 = chart5.append("g")
+				.attr("class", "brush2")
+				.call(brush2);
+
+			// Register brush events
+			brush2
+				.on("brushstart", brush2start)   // when mousedown&dragging starts 
+				.on("brush", brushing2)          // when dragging
+				.on("brushend", brush2end);      // when mouseup
+
+			function brush2start() {
+				brushContainer1.call(brush.clear());
+			}
+
+			function brushing2() {
+				// simultaneous update during brushing
+				var e = brush2.extent();         // coordinates of brushed area: 
+												// top-left x: e[0][0] y: e[0][1]
+												// bottom-right x: e[1][0] y: e[1][1]
+											
+				// change the class of node to brushed if the node is inside the brushed extent
+				chart5.selectAll('circle').classed("selected2", function(d) {
+					
+					return e[0][0] <= d.num_user_for_reviews && d.num_user_for_reviews <= e[1][0] &&
+						e[0][1] <= d.imdb_score && d.imdb_score <= e[1][1];
+				
+				});
+
+				// extract the indexes of brushed elements
+				brushed_idx = chart5.selectAll("circle.selected2").data().map(a => a.ID);
+
+				// link to second svg- highlight nodes (that are brushed in svg1) in svg2
+				chart4.selectAll("circle").classed("selected", function(d) {
+					return brushed_idx.includes(d.ID);
+				});
+			}
+
+			function brush2end() {
+				// update after brusing is finished
+			}
+
+
+		}); //csv
 
    	</script>
 
