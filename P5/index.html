@@ -7,6 +7,9 @@
     body {
 	  font: 12px sans-serif;
 	}
+	body {
+    background-color: #f6f6f6;
+	} 
 	.tick > line {
 		fill: none;
 		stroke: black;
@@ -88,6 +91,9 @@
 		var num_user_for_reviews = 0;
 		var imdb_score = 0;
 
+		var curText = "";
+
+
 		d3.csv("test.csv", function(csv) {
 
 			for (var i=0; i<csv.length; ++i) {
@@ -150,7 +156,36 @@
         		.attr('height', d => height1 - yScale(d.values))
         		.attr('width', 30)
         		.attr("transform", "translate(-15, 0)")
-        		.style('fill',d => colorScale(d.key));
+        		.style('fill',d => colorScale(d.key))
+        		.on("mouseover", function(d) {
+      					d3.select(this).style("fill", "#dcdcdc");
+      					curText = chart1.append("text").text(function(){return d.key + " : " + d.values;}).style("font", "15px avenir").style("font-weight", "bold").attr("transform", "translate("+ (width-120)+",0)");
+
+      			})
+        		.on("mouseout", function(d) {
+      					d3.select(this).style("fill", colorScale(d.key));
+      					curText.remove();
+      			})
+      			.on("click", function(d,i){ 
+							// select the clicked circle
+							chart4.selectAll('circle').classed("selected", false);
+							chart5.selectAll('circle').classed("selected", false);
+
+							chart4.selectAll('circle').classed("selected", function(e) {
+								if (d.key != 'N/A')			
+								return e.title_year  == d.key;
+								else
+								return e.title_year == '0'
+							});
+							chart5.selectAll('circle').classed("selected2", function(e) {			
+								if (d.key != 'N/A')			
+								return e.title_year  == d.key;
+								else
+								return e.title_year == '0'
+							});
+
+					});
+
 
         	var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
     		chart1.append("g")
@@ -194,7 +229,7 @@
     				if (d.values > 10) 
     				return d.key;
     				else
-    				return "other";
+    				return "Other";
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return d.values;});})
     			.entries(moviesByCountry);
@@ -218,9 +253,41 @@
         			.enter().append("g")
         				.attr("class", "arc");
 
+
         	g.append("path")
       				.attr("d", arc)
-      				.style("fill", function(d) { return colorScale1(d.data.key); });
+      				.style("fill", function(d) { return colorScale1(d.data.key); })
+      				.on("mouseover", function(d) {
+      					d3.select(this).style("fill", "#dcdcdc");
+      					curText = chart2.append("text").text(function(){return d.data.key + " : " + d.data.values;}).style("font", "15px avenir").style("font-weight", "bold");
+
+      				})
+        			.on("mouseout", function(d) {
+      					d3.select(this).style("fill", colorScale1(d.data.key));
+      					curText.remove();
+      				})
+      				.on("click", function(d,i){ 
+							// select the clicked circle
+							chart4.selectAll('circle').classed("selected", false);
+							chart5.selectAll('circle').classed("selected", false);
+
+							chart4.selectAll('circle').classed("selected", function(e) {
+								if (d.data.key != 'Other')			
+								return e.country  == d.data.key;
+								else
+								return e.country == '0'
+							});
+							chart5.selectAll('circle').classed("selected2", function(e) {			
+								if (d.data.key != 'other')			
+								return e.country  == d.data.key;
+								else
+								return e.country == '0'
+							});
+
+					});
+
+
+
 
       		chart2.append("text")
         		.text("Movies by Countries")
@@ -240,7 +307,7 @@
     				if (d.values > 7) 
     				return d.key;
     				else
-    				return "other";
+    				return "Other";
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return d.values;});})
     			.entries(moviesByLanguage);
@@ -266,7 +333,35 @@
 
         	g.append("path")
       				.attr("d", arc)
-      				.style("fill", function(d) { return colorScale2(d.data.key); });
+      				.style("fill", function(d) { return colorScale2(d.data.key); })
+      				.on("mouseover", function(d) {
+      					d3.select(this).style("fill", "#dcdcdc");
+      					curText = chart3.append("text").text(function(){return d.data.key + " : " + d.data.values;}).style("font", "15px avenir").style("font-weight", "bold");
+
+      				})
+        			.on("mouseout", function(d) {
+      					d3.select(this).style("fill", colorScale2(d.data.key));
+      					curText.remove();
+      				})
+      				.on("click", function(d,i){ 
+							// select the clicked circle
+							chart4.selectAll('circle').classed("selected", false);
+							chart5.selectAll('circle').classed("selected", false);
+
+							chart4.selectAll('circle').classed("selected", function(e) {
+								if (d.data.key != 'Other')			
+								return e.language  == d.data.key;
+								else
+								return e.language == '0'
+							});
+							chart5.selectAll('circle').classed("selected2", function(e) {			
+								if (d.data.key != 'other')			
+								return e.language  == d.data.key;
+								else
+								return e.language == '0'
+							});
+
+					});
 
       		chart3.append("text")
         		.text("Movies by Language")
