@@ -36,8 +36,9 @@
 		stroke-width: 2px;
 		stroke: black;
 	}
-	#wrapper {
-		clear:both;
+	.wrapper {
+		display: table;
+    	margin: 0 auto;
 	}
 	#top {
 		padding-left: 700px;
@@ -45,7 +46,7 @@
 	#info {
 		float:left;
 		width: 300px;
-		font-size: 14px
+		font-size: 13px
 	}
 	#chart1 {
 	    float:left;
@@ -70,7 +71,7 @@
 
    	</head>
    	<body>
-   	<div id="wrapper">
+   	<div class="wrapper">
 		<div id="top"><h1> Movie MultiView </h1></div>
 		   <br><br><br>
    	  	<div id="info">
@@ -91,7 +92,7 @@
           	</div>
 	  	<div id="chart3"> 
          	</div>
-        <br> <br><br><br>
+        <br> <br><br><br><br>
       	<div id="chart4"> 
           	</div>
       	<div id="chart5"> 
@@ -531,6 +532,10 @@
 						d.movie_title = d.movie_title.replace(';','');
 						d.movie_title = d.movie_title.replace('#','');
 						d.movie_title = d.movie_title.replace('@','');
+						d.movie_title = d.movie_title.replace('&','');
+						d.movie_title = d.movie_title.replace('-',' ');
+						d.movie_title = d.movie_title.replace('$','');
+						d.movie_title = d.movie_title.replace('%','');
 						d.movie_title = d.movie_title.replace('?','');
 						d.movie_title = d.movie_title.replace('!','');
 						d.movie_title = d.movie_title.replace('*','');
@@ -646,6 +651,10 @@
 					d.movie_title = d.movie_title.replace(';','');
 					d.movie_title = d.movie_title.replace('#','');
 					d.movie_title = d.movie_title.replace('@','');
+					d.movie_title = d.movie_title.replace('&','');
+					d.movie_title = d.movie_title.replace('$','');
+					d.movie_title = d.movie_title.replace('%','');
+					d.movie_title = d.movie_title.replace('-',' ');
 					d.movie_title = d.movie_title.replace('?','');
 					d.movie_title = d.movie_title.replace('!','');
 					d.movie_title = d.movie_title.replace('*','');
