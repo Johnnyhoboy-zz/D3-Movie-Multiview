@@ -24,7 +24,7 @@
 	}
 	path.domain {
 		fill: none;
-		stroke-width: 2px;
+		stroke-widthPlot: 2px;
 		stroke: black;
 	}
 	#wrapper {
@@ -68,8 +68,8 @@
           	</div>
    	</div>
    	<script>
-   		var width = 750;
-		var height = 750;
+   		var widthPlot = 750;
+		var heightPlot = 750;
 
 		var num_critic_for_reviews= 0;
 		var num_user_for_reviews = 0;
@@ -134,14 +134,14 @@
 
 			var chart4 = d3.select("#chart4")
 		                .append("svg:svg")
-		                .attr("width",width)
-		                .attr("height",height);
+		                .attr("width",widthPlot)
+		                .attr("height",heightPlot);
 
 
 	    	var chart5 = d3.select("#chart5")
 		                .append("svg:svg")
-		                .attr("width",width)
-		                .attr("height",height);
+		                .attr("width",widthPlot)
+		                .attr("height",heightPlot);
 
 			var temp1= chart4.selectAll("circle")
 					.data(csv)
@@ -209,11 +209,11 @@
 
 			chart4 
 				.append("g") // create a group node
-				.attr("transform", "translate(0,"+ (width -30)+ ")")
+				.attr("transform", "translate(0,"+ (widthPlot -30)+ ")")
 				.call(xAxis) // call the axis generator
 				.append("text")
 				.attr("class", "label")
-				.attr("x", width-16)
+				.attr("x", widthPlot-16)
 				.attr("y", -6)
 				.style("text-anchor", "end")
 				.text("Number of Critic Reviews");
@@ -232,11 +232,11 @@
 
 			chart5 
 				.append("g") // create a group node
-				.attr("transform", "translate(0,"+ (width -30)+ ")")
+				.attr("transform", "translate(0,"+ (widthPlot -30)+ ")")
 				.call(xAxis2)
 				.append("text")
 				.attr("class", "label")
-				.attr("x", width-16)
+				.attr("x", widthPlot-16)
 				.attr("y", -6)
 				.style("text-anchor", "end")
 				.text("Number of User Reviews");
@@ -256,7 +256,7 @@
 			// ------------------------------------------------------
 			// Define brush 1
 			var brush = d3.svg.brush()
-			.extent([[0, 0],[width, height]]);
+			.extent([[0, 0],[widthPlot, heightPlot]]);
 
 			// Set scales for brush. 
 			brush.x(xScale).y(yScale);
@@ -306,7 +306,7 @@
 			// --------------------------------------------------------
 			// Define brush 2
 			var brush2 = d3.svg.brush()
-			.extent([[0, 0],[width, height]]);
+			.extent([[0, 0],[widthPlot, heightPlot]]);
 
 			// Set scales for brush. 
 			brush2.x(xScale2).y(yScale2);
