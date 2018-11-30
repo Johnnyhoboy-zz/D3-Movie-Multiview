@@ -260,12 +260,16 @@
 		               	.append("g")
 		               	.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
+		    var countCountry = 0;
+		    var otherCountry = [];
 		    var colorScale1 = d3.scale.category20c();
 		    var moviesByCountryfilter = d3.nest()
     			.key(function(d){
     				if (d.values > 10) 
     				return d.key;
     				else
+    				otherCountry[countCountry] = d.key;
+    				countCountry++;
     				return "Other";
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return d.values;});})
@@ -311,13 +315,21 @@
 								if (d.data.key != 'Other')			
 								return e.country  == d.data.key;
 								else
-								return e.country == '0'
+								for (i = 0; i < otherCountry.length; i++) {
+									if (otherCountry[i] == e.country)
+										return true;
+								}
+								return false;
 							});
 							chart5.selectAll('circle').classed("selected2", function(e) {			
-								if (d.data.key != 'other')			
+								if (d.data.key != 'Other')			
 								return e.country  == d.data.key;
 								else
-								return e.country == '0'
+								for (i = 0; i < otherCountry.length; i++) {
+									if (otherCountry[i] == e.country)
+										return true;
+								}
+								return false;
 							});
 
 					});
@@ -337,12 +349,16 @@
 		               	.append("g")
 		               	.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
+		    var countLanguage = 0;
+		    var otherLanguage = [];
 		    var colorScale2 = d3.scale.category20();
 		    var moviesByLanguagefilter = d3.nest()
     			.key(function(d){
     				if (d.values > 7) 
     				return d.key;
     				else
+    				otherLanguage[countLanguage] = d.key;
+    				countLanguage++;
     				return "Other";
     			})
     			.rollup(function(v){ return d3.sum(v, function(d){return d.values;});})
@@ -387,13 +403,21 @@
 								if (d.data.key != 'Other')			
 								return e.language  == d.data.key;
 								else
-								return e.language == '0'
+								for (i = 0; i < otherLanguage.length; i++) {
+									if (otherLanguage[i] == e.language)
+										return true;
+								}
+								return false;
 							});
 							chart5.selectAll('circle').classed("selected2", function(e) {			
-								if (d.data.key != 'other')			
+								if (d.data.key != 'Other')			
 								return e.language  == d.data.key;
 								else
-								return e.language == '0'
+								for (i = 0; i < otherLanguage.length; i++) {
+									if (otherLanguage[i] == e.language)
+										return true;
+								}
+								return false;
 							});
 
 					});
